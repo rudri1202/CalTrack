@@ -23,12 +23,12 @@ function MacroBar({ label, actual, goal, color }: { label: string; actual: numbe
   return (
     <div>
       <div className="flex justify-between text-sm mb-1">
-        <span className="font-medium text-gray-700">{label}</span>
-        <span className={over ? 'text-red-600 font-semibold' : 'text-gray-500'}>
+        <span className="font-medium text-gray-700 dark:text-gray-300">{label}</span>
+        <span className={over ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-gray-500 dark:text-gray-400'}>
           {actual.toFixed(0)} / {goal}
         </span>
       </div>
-      <div className="w-full bg-gray-100 rounded-full h-2">
+      <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2">
         <div
           className={`h-2 rounded-full transition-all ${over ? 'bg-red-400' : color}`}
           style={{ width: `${pct}%` }}
@@ -85,7 +85,7 @@ export default function Dashboard() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600" />
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600 dark:border-primary-400" />
       </div>
     )
   }
@@ -95,8 +95,8 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Good day, {user?.name?.split(' ')[0]}!</h1>
-          <p className="text-gray-500 text-sm">{format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Good day, {user?.name?.split(' ')[0]}!</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">{format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
         </div>
         <Link
           to="/meals"
@@ -108,24 +108,24 @@ export default function Dashboard() {
       </div>
 
       {/* Calorie summary card */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div className="flex items-center gap-2 mb-4">
           <Flame className="text-orange-500" size={20} />
-          <h2 className="font-semibold text-gray-900">Today's Calories</h2>
+          <h2 className="font-semibold text-gray-900 dark:text-gray-100">Today's Calories</h2>
         </div>
         <div className="flex items-end gap-6">
           <div>
-            <p className="text-5xl font-bold text-gray-900">{Math.round(totals.calories)}</p>
-            <p className="text-sm text-gray-500 mt-1">of {goals.daily_calories} kcal goal</p>
+            <p className="text-5xl font-bold text-gray-900 dark:text-gray-100">{Math.round(totals.calories)}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">of {goals.daily_calories} kcal goal</p>
           </div>
           <div className="flex-1">
             <div className="flex justify-between text-sm mb-1">
-              <span className="text-gray-500">Remaining</span>
-              <span className={remaining < 0 ? 'text-red-600 font-semibold' : 'text-primary-600 font-semibold'}>
+              <span className="text-gray-500 dark:text-gray-400">Remaining</span>
+              <span className={remaining < 0 ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-primary-600 dark:text-primary-400 font-semibold'}>
                 {remaining < 0 ? `${Math.abs(Math.round(remaining))} over` : `${Math.round(remaining)} left`}
               </span>
             </div>
-            <div className="w-full bg-gray-100 rounded-full h-3">
+            <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-3">
               <div
                 className={`h-3 rounded-full transition-all ${remaining < 0 ? 'bg-red-400' : 'bg-primary-500'}`}
                 style={{ width: `${Math.min((totals.calories / goals.daily_calories) * 100, 100)}%` }}
@@ -136,8 +136,8 @@ export default function Dashboard() {
       </div>
 
       {/* Macros breakdown */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-        <h2 className="font-semibold text-gray-900 mb-4">Macros</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Macros</h2>
         <div className="space-y-3">
           <MacroBar label="Protein" actual={totals.protein_g} goal={goals.protein_g} color="bg-blue-500" />
           <MacroBar label="Carbs" actual={totals.carbs_g} goal={goals.carbs_g} color="bg-yellow-400" />
@@ -148,19 +148,19 @@ export default function Dashboard() {
       {/* Quick stat cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'Calories', value: `${Math.round(totals.calories)}`, unit: 'kcal', icon: Flame, color: 'text-orange-500 bg-orange-50' },
-          { label: 'Protein', value: `${totals.protein_g.toFixed(1)}`, unit: 'g', icon: Beef, color: 'text-blue-500 bg-blue-50' },
-          { label: 'Carbs', value: `${totals.carbs_g.toFixed(1)}`, unit: 'g', icon: Wheat, color: 'text-yellow-600 bg-yellow-50' },
-          { label: 'Fat', value: `${totals.fat_g.toFixed(1)}`, unit: 'g', icon: Droplets, color: 'text-red-500 bg-red-50' },
+          { label: 'Calories', value: `${Math.round(totals.calories)}`, unit: 'kcal', icon: Flame, color: 'text-orange-500 bg-orange-50 dark:bg-orange-900/30' },
+          { label: 'Protein', value: `${totals.protein_g.toFixed(1)}`, unit: 'g', icon: Beef, color: 'text-blue-500 bg-blue-50 dark:bg-blue-900/30' },
+          { label: 'Carbs', value: `${totals.carbs_g.toFixed(1)}`, unit: 'g', icon: Wheat, color: 'text-yellow-600 bg-yellow-50 dark:bg-yellow-900/30' },
+          { label: 'Fat', value: `${totals.fat_g.toFixed(1)}`, unit: 'g', icon: Droplets, color: 'text-red-500 bg-red-50 dark:bg-red-900/30' },
         ].map(({ label, value, unit, icon: Icon, color }) => (
-          <div key={label} className="bg-white rounded-xl border border-gray-200 p-4">
+          <div key={label} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
             <div className={`inline-flex p-2 rounded-lg mb-2 ${color}`}>
               <Icon size={18} />
             </div>
-            <p className="text-2xl font-bold text-gray-900">
-              {value}<span className="text-sm font-normal text-gray-400 ml-1">{unit}</span>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {value}<span className="text-sm font-normal text-gray-400 dark:text-gray-500 ml-1">{unit}</span>
             </p>
-            <p className="text-xs text-gray-500 mt-0.5">{label}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{label}</p>
           </div>
         ))}
       </div>
@@ -168,14 +168,14 @@ export default function Dashboard() {
       {/* Today's meals */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-semibold text-gray-900">Today's Meals ({entries.length})</h2>
-          <Link to="/meals" className="text-sm text-primary-600 hover:underline">
+          <h2 className="font-semibold text-gray-900 dark:text-gray-100">Today's Meals ({entries.length})</h2>
+          <Link to="/meals" className="text-sm text-primary-600 dark:text-primary-400 hover:underline">
             View all
           </Link>
         </div>
         {entries.length === 0 ? (
-          <div className="bg-white rounded-xl border border-dashed border-gray-300 p-8 text-center">
-            <p className="text-gray-500 mb-3">No meals logged today</p>
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 p-8 text-center">
+            <p className="text-gray-500 dark:text-gray-400 mb-3">No meals logged today</p>
             <Link
               to="/meals"
               className="inline-flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700"
@@ -190,7 +190,7 @@ export default function Dashboard() {
               <FoodEntryCard key={entry.id} entry={entry} onDelete={handleDelete} />
             ))}
             {entries.length > 5 && (
-              <Link to="/meals" className="block text-center text-sm text-primary-600 hover:underline py-2">
+              <Link to="/meals" className="block text-center text-sm text-primary-600 dark:text-primary-400 hover:underline py-2">
                 View {entries.length - 5} more entries
               </Link>
             )}

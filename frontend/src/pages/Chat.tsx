@@ -13,21 +13,21 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
       <div
         className={clsx(
           'flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center',
-          isUser ? 'bg-primary-600' : 'bg-gray-200'
+          isUser ? 'bg-primary-600' : 'bg-gray-200 dark:bg-gray-700'
         )}
       >
-        {isUser ? <User size={16} className="text-white" /> : <Bot size={16} className="text-gray-600" />}
+        {isUser ? <User size={16} className="text-white" /> : <Bot size={16} className="text-gray-600 dark:text-gray-300" />}
       </div>
       <div
         className={clsx(
           'max-w-[75%] rounded-2xl px-4 py-3 text-sm',
           isUser
             ? 'bg-primary-600 text-white rounded-tr-sm'
-            : 'bg-white border border-gray-200 text-gray-800 rounded-tl-sm'
+            : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 rounded-tl-sm'
         )}
       >
         <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
-        <p className={clsx('text-xs mt-1.5', isUser ? 'text-primary-200' : 'text-gray-400')}>
+        <p className={clsx('text-xs mt-1.5', isUser ? 'text-primary-200' : 'text-gray-400 dark:text-gray-500')}>
           {format(new Date(msg.created_at), 'h:mm a')}
         </p>
       </div>
@@ -124,8 +124,8 @@ export default function Chat() {
           <MessageSquare className="text-primary-600" size={20} />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-gray-900">AI Nutrition Assistant</h1>
-          <p className="text-xs text-gray-500">Powered by Groq — log meals, check goals, get advice</p>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">AI Nutrition Assistant</h1>
+          <p className="text-xs text-gray-500 dark:text-gray-400">Powered by Groq — log meals, check goals, get advice</p>
         </div>
       </div>
 
@@ -152,15 +152,15 @@ export default function Chat() {
           </div>
         ) : messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
-            <Bot className="text-gray-300 mb-4" size={48} />
-            <p className="text-gray-500 font-medium">Start chatting with your AI nutrition assistant</p>
-            <p className="text-gray-400 text-sm mt-1">Ask me anything about your nutrition, log meals, or check your progress</p>
+            <Bot className="text-gray-300 dark:text-gray-600 mb-4" size={48} />
+            <p className="text-gray-500 dark:text-gray-400 font-medium">Start chatting with your AI nutrition assistant</p>
+            <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">Ask me anything about your nutrition, log meals, or check your progress</p>
             <div className="mt-6 flex flex-wrap gap-2 justify-center">
               {SUGGESTIONS.map((s) => (
                 <button
                   key={s}
                   onClick={() => handleSend(s)}
-                  className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full px-4 py-2 transition-colors"
+                  className="text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-full px-4 py-2 transition-colors"
                 >
                   {s}
                 </button>
@@ -174,11 +174,11 @@ export default function Chat() {
             ))}
             {isSending && (
               <div className="flex gap-3 mb-4">
-                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                  <Bot size={16} className="text-gray-600" />
+                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                  <Bot size={16} className="text-gray-600 dark:text-gray-300" />
                 </div>
-                <div className="bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-4 py-3">
-                  <Loader2 size={16} className="animate-spin text-gray-400" />
+                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl rounded-tl-sm px-4 py-3">
+                  <Loader2 size={16} className="animate-spin text-gray-400 dark:text-gray-500" />
                 </div>
               </div>
             )}
@@ -194,7 +194,7 @@ export default function Chat() {
             <button
               key={s}
               onClick={() => handleSend(s)}
-              className="text-xs bg-gray-100 hover:bg-primary-50 hover:text-primary-700 text-gray-600 rounded-full px-3 py-1.5 whitespace-nowrap transition-colors flex-shrink-0"
+              className="text-xs bg-gray-100 dark:bg-gray-700 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-300 text-gray-600 dark:text-gray-400 rounded-full px-3 py-1.5 whitespace-nowrap transition-colors flex-shrink-0"
             >
               {s}
             </button>
@@ -203,7 +203,7 @@ export default function Chat() {
       )}
 
       {/* Input */}
-      <div className="pt-3 border-t border-gray-200">
+      <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
         <div className="flex gap-2">
           <textarea
             value={input}
@@ -211,7 +211,7 @@ export default function Chat() {
             onKeyDown={handleKeyDown}
             placeholder="Ask about nutrition, log a meal..."
             rows={1}
-            className="flex-1 rounded-xl border border-gray-300 px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 max-h-32"
+            className="flex-1 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 max-h-32 placeholder-gray-500 dark:placeholder-gray-400"
           />
           <button
             onClick={() => handleSend()}
@@ -221,7 +221,7 @@ export default function Chat() {
             <Send size={18} />
           </button>
         </div>
-        <p className="text-xs text-gray-400 mt-1.5 text-center">Press Enter to send, Shift+Enter for new line</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 text-center">Press Enter to send, Shift+Enter for new line</p>
       </div>
     </div>
   )

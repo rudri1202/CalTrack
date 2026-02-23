@@ -4,6 +4,32 @@
 
 @layer base {
   body {
-    @apply text-gray-900 antialiased;
+    @apply text-gray-900 antialiased dark:text-gray-100;
   }
+}
+
+/* Overlay scrollbars: thin, transparent until hover */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+*:hover {
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 4px;
+}
+*:hover::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.5);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.7);
 }

@@ -16,27 +16,27 @@ const mealColors: Record<string, string> = {
 
 export default function FoodEntryCard({ entry, onDelete }: Props) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-shadow">
+    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 hover:shadow-sm transition-shadow">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <span
-              className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full capitalize ${mealColors[entry.meal_type] || 'bg-gray-100 text-gray-700'}`}
+              className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full capitalize ${mealColors[entry.meal_type] || 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
             >
               {entry.meal_type}
             </span>
-            <h3 className="font-medium text-gray-900 truncate">{entry.food_name}</h3>
+            <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate">{entry.food_name}</h3>
           </div>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
             {entry.quantity} {entry.quantity_unit}
           </p>
         </div>
         <div className="text-right flex-shrink-0">
-          <p className="font-semibold text-gray-900">{Math.round(entry.calories)} kcal</p>
+          <p className="font-semibold text-gray-900 dark:text-gray-100">{Math.round(entry.calories)} kcal</p>
         </div>
       </div>
       <div className="mt-3 flex items-center justify-between">
-        <div className="flex gap-4 text-xs text-gray-500">
+        <div className="flex gap-4 text-xs text-gray-500 dark:text-gray-400">
           <span>P: {entry.protein_g.toFixed(1)}g</span>
           <span>C: {entry.carbs_g.toFixed(1)}g</span>
           <span>F: {entry.fat_g.toFixed(1)}g</span>
@@ -45,7 +45,7 @@ export default function FoodEntryCard({ entry, onDelete }: Props) {
         {onDelete && (
           <button
             onClick={() => onDelete(entry.id)}
-            className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded"
+            className="text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors p-1 rounded"
             aria-label="Delete entry"
           >
             <Trash2 size={15} />

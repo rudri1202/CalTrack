@@ -57,29 +57,29 @@ export default function ImageUpload({ onClose, onEntryCreated }: Props) {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Camera className="text-primary-600" size={20} />
-          <h2 className="font-semibold text-gray-900">AI Food Scanner</h2>
+          <Camera className="text-primary-600 dark:text-primary-400" size={20} />
+          <h2 className="font-semibold text-gray-900 dark:text-gray-100">AI Food Scanner</h2>
         </div>
-        <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+        <button onClick={onClose} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
           <X size={20} />
         </button>
       </div>
 
-      <p className="text-sm text-gray-500 mb-4">
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
         Upload a photo of your meal or a nutrition label and AI will extract the nutritional info.
       </p>
 
       {!file ? (
         <div
-          className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-primary-400 hover:bg-primary-50 transition-colors"
+          className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center cursor-pointer hover:border-primary-400 dark:hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors"
           onClick={() => inputRef.current?.click()}
         >
-          <Upload className="mx-auto text-gray-400 mb-3" size={32} />
-          <p className="text-gray-600 font-medium">Click to upload photo</p>
-          <p className="text-xs text-gray-400 mt-1">JPEG, PNG, WEBP up to 10MB</p>
+          <Upload className="mx-auto text-gray-400 dark:text-gray-500 mb-3" size={32} />
+          <p className="text-gray-600 dark:text-gray-300 font-medium">Click to upload photo</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">JPEG, PNG, WEBP up to 10MB</p>
           <input
             ref={inputRef}
             type="file"
@@ -91,10 +91,10 @@ export default function ImageUpload({ onClose, onEntryCreated }: Props) {
       ) : (
         <div className="space-y-4">
           <div className="relative">
-            <img src={preview!} alt="Preview" className="w-full max-h-64 object-contain rounded-xl border border-gray-200" />
+            <img src={preview!} alt="Preview" className="w-full max-h-64 object-contain rounded-xl border border-gray-200 dark:border-gray-600" />
             <button
               onClick={() => { setFile(null); setPreview(null); setResult(null) }}
-              className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-sm hover:bg-gray-50"
+              className="absolute top-2 right-2 bg-white dark:bg-gray-800 rounded-full p-1 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <X size={16} />
             </button>
@@ -129,7 +129,7 @@ export default function ImageUpload({ onClose, onEntryCreated }: Props) {
                 <p className="text-sm font-semibold text-primary-700 mb-2">AI Analysis Result</p>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div>
-                    <span className="text-gray-500">Food: </span>
+                    <span className="text-gray-500 dark:text-gray-400">Food: </span>
                     <span className="font-medium">{result.food_name}</span>
                   </div>
                   <div>
@@ -156,7 +156,7 @@ export default function ImageUpload({ onClose, onEntryCreated }: Props) {
               </div>
 
               <div>
-                <p className="text-sm font-medium text-gray-700 mb-3">Review & Save Entry</p>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Review & Save Entry</p>
                 <MealEntryForm
                   onSubmit={handleSaveEntry}
                   onCancel={onClose}
