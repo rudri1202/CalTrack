@@ -5,7 +5,7 @@ FastAPI app with auth, meal logging, goals, reports, and AI assistant.
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, goals, entries, reports, ai
+from app.routers import auth, goals, entries, reports, ai, import_router
 
 
 @asynccontextmanager
@@ -38,6 +38,7 @@ app.include_router(goals.router)
 app.include_router(entries.router)
 app.include_router(reports.router)
 app.include_router(ai.router)
+app.include_router(import_router.router)
 
 
 @app.get("/health")
