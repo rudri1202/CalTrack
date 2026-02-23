@@ -1,6 +1,7 @@
 /** Bulk import food entries from a PDF nutrition diary. */
 import { useRef, useState } from 'react'
-import { Upload, FileText, CheckCircle, AlertCircle, X } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Upload, FileText, CheckCircle, AlertCircle, X, ArrowRight } from 'lucide-react'
 import { importPdf } from '../api/import'
 import type { ImportResult } from '../types'
 
@@ -153,9 +154,17 @@ export default function ImportPage() {
           </div>
 
           {result.imported > 0 && (
-            <div className="flex items-center gap-2 text-green-700 dark:text-green-300 text-sm">
-              <CheckCircle size={16} />
-              Successfully added {result.imported} {result.imported === 1 ? 'entry' : 'entries'} to your meal history.
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <div className="flex items-center gap-2 text-green-700 dark:text-green-300 text-sm">
+                <CheckCircle size={16} />
+                Successfully added {result.imported} {result.imported === 1 ? 'entry' : 'entries'} to your meal history.
+              </div>
+              <Link
+                to="/meals"
+                className="flex items-center gap-1.5 text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline"
+              >
+                View in Meal Log <ArrowRight size={14} />
+              </Link>
             </div>
           )}
 

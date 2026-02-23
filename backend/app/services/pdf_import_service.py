@@ -137,6 +137,10 @@ def parse_pdf(file_bytes: bytes) -> tuple[list[dict], list[str]]:
                 errors.append(f"Row {row_idx}: missing food name — skipped")
                 continue
 
+            # Skip repeated header rows (PDFs often repeat headers on each page)
+            if food_name.lower() in HEADER_KEYWORDS:
+                continue
+
             calories = _parse_float(get('calories'))
             if calories is None:
                 errors.append(f"Row {row_idx} ({food_name}): invalid calories value — skipped")

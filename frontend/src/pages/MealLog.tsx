@@ -68,10 +68,14 @@ export default function MealLog() {
     }
   }
 
-  const setQuickDate = (days: number) => {
-    const d = format(subDays(new Date(), days), 'yyyy-MM-dd')
-    setStartDate(d)
-    setEndDate(d)
+  const setQuickDate = (days: number | 'all') => {
+    if (days === 'all') {
+      setStartDate('2020-01-01')
+      setEndDate(today)
+    } else {
+      setStartDate(format(subDays(new Date(), days), 'yyyy-MM-dd'))
+      setEndDate(today)
+    }
     setPage(1)
   }
 
@@ -163,13 +167,13 @@ export default function MealLog() {
           <div>
             <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Quick</label>
             <div className="flex gap-1">
-              {[0, 1, 7].map((d) => (
+              {([0, 1, 7, 'all'] as const).map((d) => (
                 <button
                   key={d}
                   onClick={() => setQuickDate(d)}
                   className="flex-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded px-1 py-1.5 transition-colors text-gray-900 dark:text-gray-100"
                 >
-                  {d === 0 ? 'Today' : d === 1 ? 'Yesterday' : '7d'}
+                  {d === 0 ? 'Today' : d === 1 ? 'Yesterday' : d === 7 ? '7d' : 'All'}
                 </button>
               ))}
             </div>
