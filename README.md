@@ -6,6 +6,12 @@ CalTrack combines structured nutrition tracking with AI assistance, automated go
 
 ---
 
+## 🎥 Demo
+
+[▶ Watch the full demo on Google Drive](https://drive.google.com/file/d/1oujQwOjg7dqz8TJUMljwfZuacSfs2gUl/view?usp=sharing)
+
+---
+
 # ✨ Core Highlights
 
 - 🔐 JWT Authentication with silent refresh
