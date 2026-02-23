@@ -15,6 +15,7 @@ import Goals from './pages/Goals'
 import Reports from './pages/Reports'
 import Chat from './pages/Chat'
 import ImportPage from './pages/ImportPage'
+import LandingPage from './pages/LandingPage'
 
 export default function App() {
   return (
@@ -42,9 +43,9 @@ export default function App() {
               <Route path="/import" element={<ImportPage />} />
             </Route>
 
-            {/* Default redirect */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            {/* Landing page and fallback */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
