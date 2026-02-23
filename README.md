@@ -1,252 +1,318 @@
-# CalTrack
+# 🚀 CalTrack
 
-A full-stack personal calorie and nutrition tracker with AI-powered meal analysis, goal automation, and analytics.
+> A full-stack, AI-powered calorie and nutrition tracking platform with automated goal calculation, smart imports, and rich analytics.
 
----
-
-## Tech Stack
-
-### Backend
-| Layer | Technology |
-|---|---|
-| Framework | FastAPI 0.111 |
-| Database | PostgreSQL (async via asyncpg) |
-| ORM | SQLAlchemy 2.0 (async) |
-| Migrations | Alembic |
-| Auth | JWT — access tokens (30 min) + refresh tokens (7 days) via python-jose |
-| Password hashing | bcrypt |
-| AI / LLM | Groq API — Llama 3.3 70B Versatile |
-| Image analysis | Pillow |
-| PDF parsing | pdfplumber |
-| Validation | Pydantic v2 |
-| Server | Uvicorn |
-
-### Frontend
-| Layer | Technology |
-|---|---|
-| Framework | React 18 + TypeScript |
-| Build tool | Vite |
-| Styling | Tailwind CSS (dark mode — class strategy) |
-| Routing | React Router v6 |
-| Forms | React Hook Form + Zod |
-| Charts | Recharts |
-| HTTP client | Axios (with auto token-refresh interceptor) |
-| Icons | Lucide React |
+CalTrack combines structured nutrition tracking with AI assistance, automated goal setting, and flexible data ingestion — built with a modern async Python backend and a strongly typed React frontend.
 
 ---
 
-## Features
+# ✨ Core Highlights
 
-### Authentication
-- Email + password registration and login
-- JWT access / refresh token pair with silent auto-refresh on 401
-- Protected routes — unauthenticated users are redirected to `/login`
+- 🔐 JWT Authentication with silent refresh
+- 🤖 AI Nutrition Assistant (Groq — Llama 3.3 70B)
+- 📊 Advanced analytics & goal comparison
+- 📷 Image-based nutrition estimation
+- 📄 Bulk PDF nutrition diary import
+- 🌗 Persistent dark / light mode
+- 🧮 Automatic BMR / TDEE goal calculation
+- ⚙️ Fully async backend (FastAPI + SQLAlchemy 2.0)
 
-### Profile-Based Goal Calculation
-- During registration, optionally provide height, weight, age, gender, and goal type (bulking / cutting / maintenance)
-- BMR calculated with the **Mifflin-St Jeor formula**, scaled by a moderate activity multiplier (×1.55) to get TDEE
-- Calorie targets: TDEE + 300 kcal (bulking), TDEE − 500 kcal (cutting), TDEE (maintenance)
-- Macros auto-set: protein 2.0 g/kg (body-comp goals) or 1.6 g/kg (maintenance), 25% calories from fat, remainder from carbs
-- Goals marked `is_custom = false` until the user manually edits them — auto-calculation never overwrites custom values
-- Goals page shows an **Auto-calculated** or **Custom** badge
+---
 
-### Meal Logging
-- Log food entries with meal type (breakfast / lunch / dinner / snack), date, quantity, and unit
+# 🏗 Tech Stack
+
+## Backend
+
+| Layer            | Technology                     |
+| ---------------- | ------------------------------ |
+| Framework        | FastAPI 0.111                  |
+| ORM              | SQLAlchemy 2.0 (async)         |
+| Database         | PostgreSQL (asyncpg)           |
+| Migrations       | Alembic                        |
+| Auth             | JWT (access 30m + refresh 7d)  |
+| Security         | bcrypt + python-jose           |
+| AI               | Groq — Llama 3.3 70B Versatile |
+| PDF Parsing      | pdfplumber                     |
+| Image Processing | Pillow                         |
+| Validation       | Pydantic v2                    |
+| Server           | Uvicorn                        |
+
+---
+
+## Frontend
+
+| Layer      | Technology                             |
+| ---------- | -------------------------------------- |
+| Framework  | React 18 + TypeScript                  |
+| Build Tool | Vite                                   |
+| Styling    | Tailwind CSS (class-based dark mode)   |
+| Routing    | React Router v6                        |
+| Forms      | React Hook Form + Zod                  |
+| Charts     | Recharts                               |
+| HTTP       | Axios (auto token refresh interceptor) |
+| Icons      | Lucide React                           |
+
+---
+
+# 🔐 Authentication
+
+- Email/password registration & login
+- JWT access + refresh tokens
+- Silent refresh on 401
+- Protected routes
+- `/me` endpoint for session hydration
+
+---
+
+# 🧮 Profile-Based Goal Automation
+
+During registration, users can optionally provide:
+
+- Height
+- Weight
+- Age
+- Gender
+- Goal type (bulking / cutting / maintenance)
+
+### Calculation Logic
+
+- **BMR** → Mifflin-St Jeor formula
+- **TDEE** → BMR × 1.55 (moderate activity)
+- **Calorie Targets**
+  - Bulking → TDEE + 300 kcal
+  - Cutting → TDEE − 500 kcal
+  - Maintenance → TDEE
+
+### Macro Distribution
+
+- Protein:
+  - 2.0 g/kg (body-composition goals)
+  - 1.6 g/kg (maintenance)
+
+- Fat → 25% of calories
+- Carbs → Remaining calories
+
+Goals are flagged with:
+
+```text
+is_custom = false  → Auto-calculated
+is_custom = true   → User modified
+```
+
+Auto-calculated values never overwrite manual edits.
+
+---
+
+# 🍽 Meal Logging
+
+- Meal types: breakfast / lunch / dinner / snack
+- Custom quantity + unit
 - Macros: calories, protein, carbs, fat
 - Optional micros: fiber, sugar, sodium
-- Arbitrary micronutrients stored as JSONB for flexibility
-- `logged_at` is a separate `DATE` field from `created_at`, allowing backfilling of past entries
-- Edit and delete existing entries
-
-### AI Nutrition Assistant (Chat)
-- Conversational interface powered by Groq (Llama 3.3 70B)
-- Last 20 messages sent as context on every request
-- AI can take inline actions (log food, update goals) via `<action>JSON</action>` tags embedded in responses
-- Chat history persisted per user
-
-### Image Upload & Analysis
-- Upload a photo of food or a nutrition label
-- Pillow processes the image; AI returns structured nutrition estimates
-- Pre-fills the meal entry form with the analysed values
-
-### Bulk Import via PDF
-- Upload any exported nutrition diary PDF containing a tabular layout
-- `pdfplumber` extracts tables and auto-detects column headers using alias mapping (handles variations like "cal", "kcal", "energy", "carbohydrates", "cho", etc.)
-- Supports multiple date formats, meal type normalisation, and per-row validation
-- Returns a results summary: entries imported, rows skipped, and per-row error details
-- Parsing logic is fully isolated from the database — safe to test independently
-
-### Reports & Analytics
-- Date-range selector with 7 / 14 / 30-day quick buttons
-- **Daily Calorie Trend** — line chart with goal reference line
-- **Daily Macronutrients** — stacked bar chart (protein / carbs / fat)
-- **Macro Distribution** — pie chart with period totals
-- **Goal vs Actual** — grouped bar chart comparing target vs logged calories
-- **Micronutrient Summary** — fiber, sugar, sodium totals + JSONB micronutrients
-- All chart tooltips and axes are theme-aware
-
-### Dark / Light Mode
-- System preference detected on first load via `prefers-color-scheme`
-- Manual toggle (Sun / Moon) persisted to `localStorage`
-- Tailwind `dark:` class strategy applied across every page and component
+- Flexible JSONB micronutrient storage
+- Separate `logged_at` date for backfilling
+- Full CRUD support
 
 ---
 
-## Project Structure
+# 🤖 AI Nutrition Assistant
+
+- Powered by Groq (Llama 3.3 70B)
+- Last 20 messages included as conversational context
+- Supports structured action execution:
+
+  ```html
+  <action>{ JSON }</action>
+  ```
+
+- Can:
+  - Log food entries
+  - Update goals
+
+- Chat history persisted per user
+
+---
+
+# 📷 Image Analysis
+
+- Upload food image or nutrition label
+- Processed via Pillow
+- AI returns structured macro estimation
+- Form pre-filled automatically
+
+---
+
+# 📄 Bulk Import via PDF
+
+Import exported nutrition diaries (tabular PDFs).
+
+### Features
+
+- Table extraction via `pdfplumber`
+- Flexible header alias mapping:
+  - calories / kcal / energy
+  - carbs / cho / carbohydrates
+
+- Date format detection
+- Meal type normalization
+- Per-row validation
+- Error reporting
+- Safe parser isolation (no DB coupling)
+
+Returns:
+
+```json
+{
+  "imported": 32,
+  "failed": 3,
+  "errors": [...]
+}
+```
+
+---
+
+# 📊 Reports & Analytics
+
+- 7 / 14 / 30 day quick selectors
+- Daily calorie trend (goal reference line)
+- Daily macro breakdown (stacked bars)
+- Macro distribution (pie chart)
+- Goal vs actual comparison
+- Micronutrient summaries
+- Fully theme-aware charts
+
+---
+
+# 🌗 Dark / Light Mode
+
+- System preference detection
+- Manual toggle (persisted in localStorage)
+- Tailwind class-based strategy
+- No hydration flash
+- Global ThemeContext
+
+---
+
+# 🗂 Project Structure
 
 ```
 CalTrack/
 ├── backend/
 │   ├── app/
-│   │   ├── main.py              # FastAPI app, CORS, router registration
-│   │   ├── config.py            # Pydantic settings from .env
-│   │   ├── database.py          # Async engine, session factory, Base
-│   │   ├── dependencies.py      # JWT bearer dependency
 │   │   ├── models/
-│   │   │   ├── user.py          # User — email, password hash, profile fields
-│   │   │   ├── goal.py          # Goal — calorie/macro targets, is_custom flag
-│   │   │   ├── food_entry.py    # FoodEntry — meal logs with macros + JSONB micros
-│   │   │   └── chat_message.py  # ChatMessage — AI conversation history
 │   │   ├── routers/
-│   │   │   ├── auth.py          # POST /register /login /refresh  GET /me
-│   │   │   ├── goals.py         # GET PUT /goals
-│   │   │   ├── entries.py       # CRUD /entries
-│   │   │   ├── reports.py       # GET /reports/*
-│   │   │   ├── ai.py            # POST /ai/chat  POST /ai/analyze-image
-│   │   │   └── import_router.py # POST /import/pdf
-│   │   ├── schemas/             # Pydantic request/response models
+│   │   ├── schemas/
 │   │   ├── services/
-│   │   │   ├── auth_service.py  # Register, login, token refresh
-│   │   │   ├── ai_service.py    # Groq chat, action parsing, image analysis
-│   │   │   ├── entry_service.py # Food entry business logic
-│   │   │   ├── report_service.py
-│   │   │   └── pdf_import_service.py  # Isolated PDF parse → (entries, errors)
-│   │   └── utils/
-│   │       ├── security.py      # JWT encode/decode, password hashing
-│   │       ├── nutrition.py     # Mifflin-St Jeor BMR/TDEE/macro calculator
-│   │       └── pagination.py
+│   │   ├── utils/
+│   │   └── main.py
 │   ├── alembic/
-│   │   └── versions/
-│   │       ├── 001_initial_schema.py
-│   │       └── 002_add_profile_and_custom_goal.py
 │   └── requirements.txt
 └── frontend/
     └── src/
-        ├── api/                 # Axios wrappers (auth, goals, entries, reports, ai, import)
-        ├── components/          # Layout, Navbar, FoodEntryCard, MealEntryForm, GoalForm
-        ├── context/             # AuthContext, ThemeContext
-        ├── pages/               # Dashboard, MealLog, Goals, Reports, Chat, ImageUpload, ImportPage
-        └── types/               # Shared TypeScript interfaces
+        ├── api/
+        ├── components/
+        ├── context/
+        ├── pages/
+        └── types/
 ```
 
 ---
 
-## Data Model
+# 🧱 Data Model Overview
 
 ```
 users
-  id, email, password_hash, name
-  height_cm, weight_kg, age, gender, goal_type   ← profile fields
-  created_at, updated_at
+  height_cm, weight_kg, age, gender, goal_type
 
-goals  (1:1 with users)
-  id, user_id
-  daily_calories, protein_g, carbs_g, fat_g, weight_goal_kg
-  is_custom                                       ← false = auto-calculated
-  created_at, updated_at
+goals
+  daily_calories, protein_g, carbs_g, fat_g
+  is_custom
 
-food_entries  (N:1 with users)
-  id, user_id, meal_type, food_name
-  quantity, quantity_unit
-  calories, protein_g, carbs_g, fat_g
-  fiber_g, sugar_g, sodium_mg                     ← optional micros
-  micronutrients (JSONB)                          ← flexible extra nutrients
-  image_url, logged_at (DATE), created_at
+food_entries
+  macros + JSONB micronutrients
+  logged_at (DATE)
 
-chat_messages  (N:1 with users)
-  id, user_id, role (user|assistant), content, created_at
+chat_messages
+  role, content
 ```
 
 ---
 
-## API Endpoints
+# 🔌 API Surface
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| POST | `/api/auth/register` | — | Create account, returns token pair |
-| POST | `/api/auth/login` | — | Authenticate, returns token pair |
-| POST | `/api/auth/refresh` | — | Exchange refresh token |
-| GET | `/api/auth/me` | ✓ | Current user profile |
-| GET | `/api/goals/` | ✓ | Fetch goals |
-| PUT | `/api/goals/` | ✓ | Upsert goals (sets is_custom=true) |
-| GET | `/api/entries/` | ✓ | List food entries (paginated) |
-| POST | `/api/entries/` | ✓ | Log a food entry |
-| PUT | `/api/entries/{id}` | ✓ | Update entry |
-| DELETE | `/api/entries/{id}` | ✓ | Delete entry |
-| GET | `/api/reports/weekly-calories` | ✓ | Daily calorie trend |
-| GET | `/api/reports/macro-breakdown` | ✓ | Daily macro breakdown |
-| GET | `/api/reports/micro-summary` | ✓ | Micronutrient totals |
-| GET | `/api/reports/goal-comparison` | ✓ | Goal vs actual |
-| POST | `/api/ai/chat` | ✓ | Send message to AI assistant |
-| POST | `/api/ai/analyze-image` | ✓ | Analyse food photo |
-| POST | `/api/import/pdf` | ✓ | Bulk import from PDF |
-| GET | `/health` | — | Liveness probe |
+Authentication, Goals, Entries, Reports, AI, Import endpoints fully RESTful and JWT protected.
+
+Health check available at:
+
+```
+GET /health
+```
 
 ---
 
-## Setup
+# ⚙️ Setup
 
-### Prerequisites
+## Prerequisites
+
 - Python 3.11+
-- Node.js 18+
+- Node 18+
 - PostgreSQL 14+
 
-### Backend
+---
+
+## Backend
 
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate      # Windows: venv\Scripts\activate
+venv\Scripts\activate          # Windows
 pip install -r requirements.txt
-
-cp .env.example .env          # then edit .env
+cp .env.example .env
 alembic upgrade head
 uvicorn app.main:app --reload --port 8000
 ```
 
-### Frontend
+---
+
+## Frontend
 
 ```bash
 cd frontend
 npm install
-npm run dev                   # starts on http://localhost:5173
-```
-
-### Environment Variables
-
-Create `backend/.env`:
-
-```env
-DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/caltrack
-SECRET_KEY=your-secret-key-here
-GROQ_API_KEY=your-groq-api-key        # required for AI chat and image analysis
-GROQ_MODEL=llama-3.3-70b-versatile    # optional, this is the default
+npm run dev
 ```
 
 ---
 
-## PDF Import Format
+# 🔐 Environment Variables
 
-The import feature expects a PDF with a table containing at minimum:
+```
+DATABASE_URL=
+SECRET_KEY=
+GROQ_API_KEY=
+GROQ_MODEL=llama-3.3-70b-versatile
+```
 
-| Column | Accepted header variants |
-|---|---|
-| Food name | food, food name, item, name, description |
-| Calories | calories, cal, kcal, energy |
-| Date *(optional)* | date, day, logged_at |
-| Meal type *(optional)* | meal, meal type, type |
-| Protein *(optional)* | protein, protein (g), prot |
-| Carbs *(optional)* | carbs, carbohydrates, cho |
-| Fat *(optional)* | fat, fat (g), lipids |
+---
 
-Rows with missing food name or unparseable calories are skipped and reported in the error list. All other rows are imported.
+# 🎯 Architectural Principles
+
+- Strict separation of concerns
+- Async-first backend
+- Service-layer business logic
+- Isolated PDF parsing
+- Type-safe frontend
+- No AI coupling inside database layer
+- Clear domain boundaries
+
+---
+
+# 📌 Why CalTrack?
+
+CalTrack is not just a calorie tracker — it is:
+
+- A demonstration of clean async backend architecture
+- AI-integrated structured data processing
+- A robust import pipeline
+- A full JWT-authenticated production-style app
+- A strongly typed React + FastAPI stack
