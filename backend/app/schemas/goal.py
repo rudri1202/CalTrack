@@ -39,6 +39,7 @@ class GoalUpdate(GoalBase):
 class GoalResponse(GoalBase):
     id: uuid.UUID
     user_id: uuid.UUID
+    is_custom: bool
     created_at: datetime
     updated_at: datetime
 

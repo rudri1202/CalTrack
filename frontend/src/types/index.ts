@@ -2,10 +2,18 @@
 export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack'
 export type MessageRole = 'user' | 'assistant'
 
+export type Gender = 'male' | 'female'
+export type GoalType = 'bulking' | 'cutting' | 'maintenance'
+
 export interface User {
   id: string
   email: string
   name: string
+  height_cm: number | null
+  weight_kg: number | null
+  age: number | null
+  gender: Gender | null
+  goal_type: GoalType | null
   created_at: string
 }
 
@@ -24,8 +32,15 @@ export interface Goal {
   carbs_g: number
   fat_g: number
   weight_goal_kg: number | null
+  is_custom: boolean
   created_at: string
   updated_at: string
+}
+
+export interface ImportResult {
+  imported: number
+  failed: number
+  errors: string[]
 }
 
 export interface FoodEntry {

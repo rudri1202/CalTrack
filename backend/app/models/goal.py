@@ -1,13 +1,17 @@
 """Goal model: daily calorie and macro targets per user."""
 import uuid
 from datetime import datetime
-from sqlalchemy import ForeignKey, Integer, Float, DateTime, func
+from sqlalchemy import ForeignKey, Integer, Float, DateTime, Boolean, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
 
 class Goal(Base):
-    """Daily calorie and nutrient goals; one per user."""
+    """Daily calorie and nutrient goals; one per user.
+
+    is_custom=False  → auto-calculated from profile at registration.
+    is_custom=True   → user has manually overridden these values.
+    """
 
     __tablename__ = "goals"
 
@@ -18,6 +22,7 @@ class Goal(Base):
     carbs_g: Mapped[float] = mapped_column(Float, nullable=False, default=250.0)
     fat_g: Mapped[float] = mapped_column(Float, nullable=False, default=65.0)
     weight_goal_kg: Mapped[float | None] = mapped_column(Float, nullable=True)
+    is_custom: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()

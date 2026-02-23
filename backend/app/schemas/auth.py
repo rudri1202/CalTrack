@@ -1,13 +1,24 @@
 """Auth request/response schemas: UserCreate, UserLogin, UserResponse, tokens."""
 import uuid
 from datetime import datetime
+from typing import Literal
 from pydantic import BaseModel, EmailStr, field_validator
+
+Gender = Literal['male', 'female']
+GoalType = Literal['bulking', 'cutting', 'maintenance']
 
 
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
     name: str
+
+    # Optional profile fields — all five required together to trigger auto goal calculation
+    height_cm: float | None = None
+    weight_kg: float | None = None
+    age: int | None = None
+    gender: Gender | None = None
+    goal_type: GoalType | None = None
 
     @field_validator("password")
     @classmethod
@@ -34,6 +45,11 @@ class UserResponse(BaseModel):
     id: uuid.UUID
     email: str
     name: str
+    height_cm: float | None
+    weight_kg: float | None
+    age: int | None
+    gender: str | None
+    goal_type: str | None
     created_at: datetime
 
     model_config = {"from_attributes": True}

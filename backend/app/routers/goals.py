@@ -42,6 +42,9 @@ async def upsert_goals(
     for field, value in update_data.items():
         setattr(goal, field, value)
 
+    # Mark as custom so auto-calculation never overwrites it
+    goal.is_custom = True
+
     await db.commit()
     await db.refresh(goal)
     return GoalResponse.model_validate(goal)

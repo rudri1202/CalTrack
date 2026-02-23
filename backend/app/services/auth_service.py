@@ -7,6 +7,7 @@ from app.models.user import User
 from app.models.goal import Goal
 from app.schemas.auth import UserCreate, UserLogin
 from app.utils.security import hash_password, verify_password, create_access_token, create_refresh_token, decode_token
+from app.utils.nutrition import calculate_goals
 
 
 async def register_user(db: AsyncSession, data: UserCreate) -> tuple[User, str, str]:
@@ -22,12 +23,27 @@ async def register_user(db: AsyncSession, data: UserCreate) -> tuple[User, str, 
         email=data.email,
         password_hash=hash_password(data.password),
         name=data.name,
+        height_cm=data.height_cm,
+        weight_kg=data.weight_kg,
+        age=data.age,
+        gender=data.gender,
+        goal_type=data.goal_type,
     )
     db.add(user)
     await db.flush()  # Get the user.id before committing
 
-    # Create default goals for new user
-    goal = Goal(user_id=user.id)
+    # Auto-calculate goals when all profile fields are provided
+    goal_kwargs: dict = {}
+    if all([data.height_cm, data.weight_kg, data.age, data.gender, data.goal_type]):
+        goal_kwargs = calculate_goals(
+            height_cm=data.height_cm,  # type: ignore[arg-type]
+            weight_kg=data.weight_kg,  # type: ignore[arg-type]
+            age=data.age,              # type: ignore[arg-type]
+            gender=data.gender,        # type: ignore[arg-type]
+            goal_type=data.goal_type,  # type: ignore[arg-type]
+        )
+
+    goal = Goal(user_id=user.id, **goal_kwargs)
     db.add(goal)
     await db.commit()
     await db.refresh(user)
